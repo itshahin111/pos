@@ -12,6 +12,15 @@ use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
+
+    function loginPage()
+    {
+        return view('pages.auth.login-page');
+    }
+
+
+
+
     public function registration(Request $request)
     {
         try {
@@ -85,10 +94,18 @@ class UserController extends Controller
 
     function userProfile(Request $request)
     {
-        $user = auth()->user();
+        // $user = auth()->user();
+        // return response()->json([
+        //     'status' => 'success',
+        //     'user' => $user
+        // ], 200);
+
+        $email = $request->header('email');
+        $user = User::where('email', '=', $email)->first();
         return response()->json([
             'status' => 'success',
-            'user' => $user
+            'message' => 'Request Successful',
+            'data' => $user
         ], 200);
 
     }
@@ -141,6 +158,59 @@ class UserController extends Controller
                     'message' => 'User not found'
                 ], 404);
             }
+        } catch (Exception $exception) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => $exception->getMessage()
+            ], 500);
+        }
+    }
+    function verifyOtp(Request $request)
+    {
+        try {
+            $request->validate([
+                'email' => 'required|string|email|max:255',
+                'otp' => 'required|string|min:4'
+            ]);
+            $email = $request->input('email');
+            $otp = $request->input('otp');
+            $user = User::where('email', '=', $email)->where('otp', '=', $otp)->first();
+            if (!$user) {
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'User not found'
+                ], 404);
+            }
+
+            User::where('email', '=', $email)->update(['otp' => '0']);
+            $token = $user->createToken('authToken')->plainTextToken;
+            return response()->json([
+                'status' => 'success',
+                'message' => 'User logged in successfully',
+                'token' => $token
+            ]);
+
+        } catch (Exception $exception) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => $exception->getMessage()
+            ], 500);
+        }
+    }
+    function resetPassword(Request $request)
+    {
+        try {
+            $request->validate([
+                'password' => 'required|string|min:8'
+            ]);
+            $id = Auth::id();
+            $password = $request->input('password');
+            User::where('id', '=', $id)->update(['password' => Hash::make($password)]);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Password updated successfully'
+            ], 200);
+
         } catch (Exception $exception) {
             return response()->json([
                 'status' => 'failed',
