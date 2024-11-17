@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
-
+Route::get("/registration", [UserController::class, 'registerPage']);
 Route::post('/user/register', [UserController::class, 'registration']);
 Route::post('/user/login', [UserController::class, 'login']);
 Route::post('/send/otp', [UserController::class, 'sendOtp']);

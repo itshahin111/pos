@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Mail;
 class UserController extends Controller
 {
 
+    function registerPage(){
+        return view("pages.auth.registration-page");
+    }
     function loginPage()
     {
         return view('pages.auth.login-page');

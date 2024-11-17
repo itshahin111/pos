@@ -13,7 +13,7 @@
                     <hr />
                     <div class="float-end mt-3">
                         <span>
-                            <a class="text-center ms-3 h6" href="{{ url('/user/registration') }}">Sign Up </a>
+                            <a class="text-center ms-3 h6" href="{{ url('/registration') }}">Sign Up </a>
                             <span class="ms-1">|</span>
                             <a class="text-center ms-3 h6" href="{{ url('/send/otp') }}">Forget Password</a>
                         </span>
